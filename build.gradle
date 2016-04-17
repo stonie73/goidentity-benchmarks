@@ -1,0 +1,40 @@
+plugins {
+    id 'idea'
+    id "com.github.lkishalmi.gatling" version "0.3.0"
+}
+
+group 'net.itconcepts'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // use main dependencies to make IDEAs Scala support work
+    compile 'org.scala-lang:scala-library:2.11.8'
+    compile group: 'io.gatling', name: 'gatling-app', version: '2.2.0'
+    compile group: 'io.gatling', name: 'gatling-recorder', version: '2.2.0'
+    compile group: 'io.gatling.highcharts', name: 'gatling-charts-highcharts', version: '2.2.0'
+}
+
+gatling {
+    toolVersion = '2.2.0'
+
+    jvmArgs = [
+            '-server',
+            '-Xms512M',
+            '-Xmx512M'
+    ]
+}
+
+task gatlingRecorder(group: 'gatling') << {
+    javaexec {
+        standardInput = System.in
+        main = 'io.gatling.recorder.GatlingRecorder'
+        classpath = sourceSets.main.runtimeClasspath
+        args = [
+                "--output-folder", "${project.buildDir}/gatling/recodings",
+        ]
+    }
+}
