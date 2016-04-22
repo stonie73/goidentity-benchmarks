@@ -5,7 +5,7 @@ import scala.concurrent.duration._
 
 class SimpleSessionSimulation extends Simulation {
 
-  val password = "Start123"
+  val DEFAULT_PASSWORD = "Start123"
 
 	val httpProtocol = http
 		.baseURL("http://5.9.110.178")
@@ -46,7 +46,7 @@ class SimpleSessionSimulation extends Simulation {
         http("User Login")
         .post("/goIdentity/jsf/1/stdportal/login.jsp?form:login=Log%20On")
         .formParam("form:username", "${userId}")
-        .formParam("form:password", "Start123")
+        .formParam("form:password", DEFAULT_PASSWORD)
         .formParam("form_SUBMIT", "1")
         .formParam("form:_link_hidden_", "")
         .headers(headers)
@@ -55,12 +55,33 @@ class SimpleSessionSimulation extends Simulation {
       )
   }
 
+  object LogoutAction {
+
+    val headers = Map(
+      "Connection" -> "keep-alive",
+      "Upgrade-Insecure-Requests" -> "1")
+
+    val uri1 = "http://5.9.110.178/goIdentity"
+
+    val logoutAction =
+      exec(http("request_0")
+        .get("/goIdentity/jsf/2/DashBoardRead.jsp?formviews_SUBMIT=1&formviews:_link_hidden_=formviews:logout&jsf_sequence=1")
+        .headers(headers)
+        .check(status.is(200))
+
+      )
+
+  }
 
 	val scn = scenario("Login Simulation")
 		.exec(
       LoginScreen.loginScreen,
-      LoginAction.loginAction
+      pause(1 second),
+      LoginAction.loginAction,
+      pause(4 seconds),
+      LogoutAction.logoutAction,
+      pause(2 seconds)
     )
 
-	setUp(scn.inject(rampUsersPerSec(1) to (5) during(3 minutes))).protocols(httpProtocol)
+	setUp(scn.inject(rampUsersPerSec(1) to (1) during(1 minutes))).protocols(httpProtocol)
 }
