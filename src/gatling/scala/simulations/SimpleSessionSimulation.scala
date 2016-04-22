@@ -1,5 +1,7 @@
+package simulations
 
-import ch.qos.logback.classic.db.names.TableName
+
+import objects._
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
@@ -83,15 +85,15 @@ class SimpleSessionSimulation extends Simulation {
       LoginAction.loginAction,
       pause(4 seconds),
       tab.SelfService.visit,
-      pause(2 seconds),
-      tab.WorkList.visit,
-      pause(2 seconds),
-      tab.DashboardService.visit,
-      pause(2 seconds),
-      LogoutAction.logoutAction,
-      pause(2 seconds)
+      pause(10 minutes),
+      LogoutAction.logoutAction
     )
 
   //setUp(scn.inject(atOnceUsers(1)).protocols(httpProtocol))
-  setUp(scn.inject(rampUsersPerSec(1) to (1) during (1 minutes))).protocols(httpProtocol)
+  setUp(scn.inject(
+    rampUsers(100) over(1 minutes),
+    constantUsersPerSec(1) during(9 minutes)
+    ).protocols(httpProtocol)
+  )
+
 }
