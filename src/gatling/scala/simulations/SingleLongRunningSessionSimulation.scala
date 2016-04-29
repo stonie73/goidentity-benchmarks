@@ -33,7 +33,7 @@ class SingleLongRunningSessionSimulation extends Simulation {
       selfService.Tab.open,
       pause(2 seconds)
     )
-    .during(10 minutes) {
+    .during(5 minutes) {
       exec(
         selfService.MenuMyData.open,
         pause(2 seconds),
@@ -44,13 +44,12 @@ class SingleLongRunningSessionSimulation extends Simulation {
       )
     }
     .exec(
-      auth.Logout.logout
+      auth.Logout.logoutFromSelfService
     )
 
   setUp(
     scn.inject(
-      atOnceUsers(1)
-      //constantUsersPerSec(0.5) during(1 minutes)
+      constantUsersPerSec(0.5) during(5 minutes)
     )
     .protocols(httpProtocol)
   )
