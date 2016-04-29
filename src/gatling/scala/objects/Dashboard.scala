@@ -6,7 +6,7 @@ import io.gatling.http.Predef._
 /**
   * Created by smue on 22.04.2016.
   */
-class DashboardActions {
+class Dashboard {
 
   val RoleNameSearchCriteria = "IDM+Identity+Activation+Approver"
 
@@ -14,6 +14,15 @@ class DashboardActions {
 
   val headers_0 = Map(
     "Origin" -> "http://5.9.110.178")
+
+  object Tab {
+    val open = exec(
+      http("Dashboard: Open Tab")
+        .get("/goIdentity/jsf/2/DashBoardRead.jsp?formviews_SUBMIT=1&formviews:_link_hidden_=formviews:views_0:gotoview&jsf_sequence=1")
+        .headers(headers_0)
+        .check(substring("Overview"))
+    )
+  }
 
   val pressButtonAddRole =
     exec(http("Dashboard: press button 'Add a Role'")
@@ -97,6 +106,8 @@ class DashboardActions {
       .post("/goIdentity/jsf/2/workflow-custom/Dashboard/ApplyForRoleSelfService_3501_1/ApplyForRoleSelfService_3501_1Init.jsp?form:wizardApplyForRoleSelfService_finish=Apply")
       .headers(headers_0)
       .formParam("form_SUBMIT", "1")
-      .formParam("form%3A_link_hidden_", ""))
+      .formParam("form%3A_link_hidden_", "")
+      .check(substring("The data of the process were saved successfully"))
+    )
   }
 }
