@@ -44,7 +44,7 @@ class SingleLongRunningSessionSimulation extends Simulation {
       )
     }
     .exec(
-      auth.Logout.logoutFromSelfService
+      auth.Logout.logout
     )
 
   setUp(

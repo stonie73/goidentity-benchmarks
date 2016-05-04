@@ -24,39 +24,66 @@ class RoleApprovalWorkflowSimulation extends Simulation {
   val auth = new Authentication()
   val workflow = new ApplyForRoleWithApprovalWorkflow()
 
-  val applyForRole = scenario("User Applies for Role")
+  val applyAndApproveRole = scenario("Apply and Approve Role")
     .exec(
-      auth.Login.userLogin,
-      pause(2 seconds, 5 seconds),
+        auth.Login.userLogin,
+        pause(2 seconds, 5 seconds),
 
-      workflow.applyForRole,
-      pause(2 seconds, 5 seconds),
+        workflow.applyForRole,
+        pause(2 seconds, 5 seconds),
+
+        auth.Logout.logout
+    )
+    .exec(
+      auth.Login.approverLogin,
+      pause(2 seconds),
+
+      workflow.approveRole,
+      pause(2 seconds),
 
       auth.Logout.logout
     )
+
+  val applyForRole = scenario("User Applies for Role")
+    .repeat(10) {
+      exec(
+        auth.Login.userLogin,
+        pause(2 seconds, 5 seconds),
+
+        workflow.applyForRole,
+        pause(2 seconds, 5 seconds),
+
+        auth.Logout.logout
+      )
+    }
 
   val approveRole = scenario("Approver approves Role")
     .exec(
       auth.Login.approverLogin,
-      pause(2 seconds, 5 seconds),
-
-
-      //workflow.approveRole,
-      pause(2 seconds, 5 seconds),
-
+      pause(2 seconds)
+    )
+    .repeat(10) {
+      exec(
+        workflow.approveRole,
+        pause(2 seconds)
+      )
+    }
+    .exec(
       auth.Logout.logout
     )
 
   setUp(
-    applyForRole.inject(
-      //atOnceUsers(1)
-      constantUsersPerSec(0.1) during(10 minutes)
-//    ),
-//    approveRole.inject(
-    //  atOnceUsers(1)
-      //constantUsersPerSec(0.1) during(1 hour)
+    applyAndApproveRole.inject(
+      constantUsersPerSec(0.10) during(5 minutes),
+      constantUsersPerSec(0.15) during(5 minutes),
+      constantUsersPerSec(0.20) during(5 minutes),
+      constantUsersPerSec(0.25) during(5 minutes)
+      //constantUsersPerSec(0.30) during(5 minutes),
+      //constantUsersPerSec(0.35) during(5 minutes)
     )
+  )
 
-  ).protocols(httpProtocol)
+    //.disablePauses
+    .protocols(httpProtocol)
 
 }

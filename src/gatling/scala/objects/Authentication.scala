@@ -56,7 +56,7 @@ class Authentication {
           http("User Login")
             .post("/goIdentity/jsf/1/stdportal/login.jsp?form:login=Log%20On")
             .formParam("form:username", "${userId}")
-            .formParam("form:password", DEFAULT_PASSWORD)
+            .formParam("form:password", "${password}")
             .formParam("form_SUBMIT", "1")
             .formParam("form:_link_hidden_", "")
             .headers(headers)
