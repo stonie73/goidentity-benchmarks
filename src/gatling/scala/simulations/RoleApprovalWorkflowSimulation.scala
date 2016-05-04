@@ -45,45 +45,45 @@ class RoleApprovalWorkflowSimulation extends Simulation {
     )
 
   val applyForRole = scenario("User Applies for Role")
-    .repeat(10) {
-      exec(
-        auth.Login.userLogin,
-        pause(2 seconds, 5 seconds),
+    .exec(
+      auth.Login.userLogin,
+      pause(2 seconds, 5 seconds),
 
-        workflow.applyForRole,
-        pause(2 seconds, 5 seconds),
+      workflow.applyForRole,
+      pause(2 seconds, 5 seconds),
 
-        auth.Logout.logout
-      )
-    }
+      auth.Logout.logout
+    )
+
 
   val approveRole = scenario("Approver approves Role")
     .exec(
       auth.Login.approverLogin,
-      pause(2 seconds)
-    )
-    .repeat(10) {
-      exec(
-        workflow.approveRole,
-        pause(2 seconds)
-      )
-    }
-    .exec(
+      pause(2 seconds),
+
+      workflow.approveRole,
+      pause(2 seconds),
+
       auth.Logout.logout
     )
 
   setUp(
     applyAndApproveRole.inject(
-      constantUsersPerSec(0.10) during(5 minutes),
-      constantUsersPerSec(0.15) during(5 minutes),
-      constantUsersPerSec(0.20) during(5 minutes),
-      constantUsersPerSec(0.25) during(5 minutes)
+      constantUsersPerSec(0.1) during(5 minutes),
+      constantUsersPerSec(0.2) during(5 minutes),
+      constantUsersPerSec(0.3) during(5 minutes)
       //constantUsersPerSec(0.30) during(5 minutes),
       //constantUsersPerSec(0.35) during(5 minutes)
     )
-  )
 
-    //.disablePauses
+ /*
+    approveRole.inject(
+      splitUsers(6) into(atOnceUsers(1)) separatedBy(4 seconds)
+    )
+ */
+
+    .disablePauses
     .protocols(httpProtocol)
+  )
 
 }
