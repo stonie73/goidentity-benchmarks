@@ -69,20 +69,21 @@ class RoleApprovalWorkflowSimulation extends Simulation {
 
   setUp(
     applyAndApproveRole.inject(
-      constantUsersPerSec(0.1) during(5 minutes),
-      constantUsersPerSec(0.2) during(5 minutes),
-      constantUsersPerSec(0.3) during(5 minutes)
-      //constantUsersPerSec(0.30) during(5 minutes),
+      constantUsersPerSec(0.2) during(2 minutes),
+      constantUsersPerSec(0.4) during(2 minutes)
+//      constantUsersPerSec(0.6) during(5 minutes),
+//      constantUsersPerSec(0.8) during(5 minutes),
+//      constantUsersPerSec(1.0) during(5 minutes)
       //constantUsersPerSec(0.35) during(5 minutes)
     )
 
- /*
+/*
     approveRole.inject(
-      splitUsers(6) into(atOnceUsers(1)) separatedBy(4 seconds)
+      splitUsers(85) into(atOnceUsers(1)) separatedBy(3 seconds)
     )
- */
+*/
 
-    .disablePauses
+//    .disablePauses
     .protocols(httpProtocol)
   )
 
